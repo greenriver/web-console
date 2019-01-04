@@ -4,7 +4,7 @@
   <a href=https://github.com/rails/web-console/tree/v2.2.1>v2.2.1</a>
 </p>
 
-# Web Console [![Build Status](https://travis-ci.org/rails/web-console.svg?branch=master)](https://travis-ci.org/rails/web-console)
+# Web Console [![Build Status](https://travis-ci.org/greenriver/web-console.svg?branch=master)](https://travis-ci.org/greenriver/web-console)
 
 _Web Console_ is a debugging tool for your Ruby on Rails applications.
 
