@@ -5,11 +5,12 @@ require "rails/railtie"
 module WebConsole
   class Railtie < ::Rails::Railtie
     config.web_console = ActiveSupport::OrderedOptions.new
-    config.web_console.whitelisted_ips = %w( 127.0.0.1 ::1 )
 
     initializer "web_console.initialize" do
       require "bindex"
       require "web_console/extensions"
+
+      ActionDispatch::DebugExceptions.register_interceptor(Interceptor)
     end
 
     initializer "web_console.development_only" do
@@ -50,10 +51,9 @@ module WebConsole
       end
     end
 
-    initializer "web_console.whitelisted_ips" do
-      if whitelisted_ips = config.web_console.whitelisted_ips
-        Request.whitelisted_ips = Whitelist.new(whitelisted_ips)
-      end
+    initializer "web_console.permissions" do
+      permissions = config.web_console.permissions || config.web_console.whitelisted_ips
+      Request.permissions = Permissions.new(permissions)
     end
 
     initializer "web_console.whiny_requests" do

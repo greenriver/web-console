@@ -380,8 +380,13 @@ REPLConsole.prototype.install = function(container) {
     var clientHeightStart   = consoleOuter.clientHeight;
 
     var doDrag = function(e) {
-      container.style.height = (startHeight + startY - e.clientY) + 'px';
+      var height = startHeight + startY - e.clientY;
       consoleOuter.scrollTop = scrollTopStart + (clientHeightStart - consoleOuter.clientHeight);
+      if (height > document.documentElement.clientHeight) {
+        container.style.height = document.documentElement.clientHeight;
+      } else {
+        container.style.height = height + 'px';
+      }
       shiftConsoleActions();
     };
 
@@ -871,9 +876,13 @@ REPLConsole.prototype.scrollToBottom = function() {
 };
 
 // Change the binding of the console.
-REPLConsole.prototype.switchBindingTo = function(frameId, callback) {
+REPLConsole.prototype.switchBindingTo = function(frameId, exceptionObjectId, callback) {
   var url = this.getSessionUrl('trace');
   var params = "frame_id=" + encodeURIComponent(frameId);
+
+  if (exceptionObjectId) {
+    params = params + "&exception_object_id=" + encodeURIComponent(exceptionObjectId);
+  }
 
   var _this = this;
   postRequest(url, params, function() {
@@ -915,7 +924,6 @@ REPLConsole.request = function request(method, url, params, callback) {
   xhr.open(method, url, true);
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-  xhr.setRequestHeader("Accept", "<%= Mime[:web_console_v2] %>");
   xhr.send(params);
 
   xhr.onreadystatechange = function() {
